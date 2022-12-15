@@ -1,0 +1,7 @@
+http://www.socle-tech.com/doc/IC%20Channel%20Product/FSTOF200xC0x%20ToF%20module%20Preliminary%20application%20guide_EN.pdf
+
+https://github.com/sharpsensoruser/sharp-sensor-demos/wiki/Application-Guide-for-Foxconn-FSTOF2002C0D-Time-of-Flight-Sensor-Module
+
+https://atceiling.blogspot.com/2020/12/arduino99lora-01-sx1278aht10.html
+
+https://github.com/sandeepmistry/arduino-LoRa/issues/13
