@@ -15,6 +15,8 @@ export const getMessages = async (req, res) => {
 export const createMessage = async (req, res) => {
   try {
     const messageInfo = req.body;
+    const newMessage = new MessageModel(messageInfo);
+    await newMessage.save();
 
     console.log("===== Create Message =====");
     console.log(messageInfo);
