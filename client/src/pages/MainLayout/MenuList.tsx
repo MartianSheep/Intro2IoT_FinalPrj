@@ -24,16 +24,16 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(
-    <Link to="/map">
-      <PieChartOutlined />
-      <span>地圖</span>
+    <Link to="/cabin">
+      <DesktopOutlined />
+      <span>列表</span>
     </Link>,
     "1"
   ),
   getItem(
-    <Link to="/cabin">
-      <DesktopOutlined />
-      <span>列表</span>
+    <Link to="/map">
+      <PieChartOutlined />
+      <span>地圖</span>
     </Link>,
     "2"
   ),

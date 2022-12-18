@@ -12,6 +12,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "antd": "^5.0.7",
+    "axios": "^1.2.1",
     "igniteui-react-charts": "^18.1.2",
     "igniteui-react-core": "^18.1.2",
     "igniteui-react-maps": "^18.1.2",

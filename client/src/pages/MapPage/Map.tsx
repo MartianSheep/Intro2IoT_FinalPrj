@@ -24,6 +24,7 @@ import { IgrArcGISOnlineMapImagery } from "igniteui-react-maps";
 import { EsriUtility, EsriStyle } from "./EsriUtils";
 
 import { Segmented, theme } from "antd";
+import axios from "../../apis/axios";
 
 IgrGeographicMapModule.register();
 IgrDataChartInteractivityModule.register();
@@ -46,7 +47,6 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
   constructor(props: any) {
     super(props);
 
-    // this.onMapRef = this.onMapRef.bind(this);
     this.onMapRef = this.onMapRef.bind(this);
     this.createTooltip = this.createTooltip.bind(this);
     this.changeTile = this.changeTile.bind(this);
@@ -111,21 +111,24 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     }
   }
 
-  public onMapRef(geoMap: IgrGeographicMap) {
+  public async onMapRef(geoMap: IgrGeographicMap) {
     if (!geoMap) return;
+
+    const cabinsData: any = await axios.get("cabins");
+    const devicesData: any = await axios.get("devices");
+
     this.geoMap = geoMap;
-    this.addSeriesWith(mountains, "rgba(0, 134, 133,0.6)", MarkerType.Pyramid);
-    this.addSeriesWith(
-      WorldLocations.getCities(),
-      "#3c9ae8",
-      MarkerType.Diamond
-    );
+    // this.addSeriesWith(mountains, "rgba(0, 134, 133,0.6)", MarkerType.Pyramid);
+    this.addSeriesWith(cabinsData, "#3c9ae8", MarkerType.Diamond);
+    this.addSeriesWith(devicesData, "red", MarkerType.Triangle);
   }
   public onSeriesMouseLeftButtonUp(
     viewer: IgrSeriesViewer,
     event: IgrDataChartMouseButtonEventArgs
   ) {
     console.log(event.item);
+
+    // this.geoMap.series.remove();
   }
   public onSeriesMouseEnter(
     viewer: IgrSeriesViewer,
@@ -197,34 +200,6 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     symbolSeries.thickness = 10000;
 
     this.geoMap.series.add(symbolSeries);
-  }
-
-  public onDataLoaded(sds: IgrShapeDataSource, e: any) {
-    const shapeRecords = sds.getPointData();
-    console.log("loaded WorldCities.shp " + shapeRecords.length);
-
-    const geoPolylines: any[] = [];
-    // parsing shapefile data and creating geo-polygons
-    for (const record of shapeRecords) {
-      // using field/column names from .DBF file
-      const route = {
-        points: record.points,
-        name: record.fieldValues.Name,
-        capacity: record.fieldValues.CapacityG,
-        distance: record.fieldValues.DistanceKM,
-      };
-      geoPolylines.push(route);
-    }
-
-    const geoSeries = new IgrGeographicPolylineSeries({ name: "series" });
-    geoSeries.dataSource = geoPolylines;
-    geoSeries.shapeMemberPath = "points";
-    geoSeries.shapeFilterResolution = 0.0;
-    geoSeries.shapeStrokeThickness = 3;
-    geoSeries.shapeStroke = "rgb(0, 255, 82, 1)";
-    geoSeries.tooltipTemplate = this.createTooltip;
-
-    this.geoMap.series.add(geoSeries);
   }
 
   public createTooltip(context: any) {
