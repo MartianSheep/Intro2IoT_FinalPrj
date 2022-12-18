@@ -1,11 +1,25 @@
 /* .ant-segmented {
   background-color: #001628;
+}*/
+/* 
+.ant-segmented-item:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
-
+*/
 .ant-segmented-item {
-  color: red;
+  transition: red 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+.ant-segmented-item-selected {
+  background-color: red;
 }
 
 .ant-segmented-thumb {
+  background-color: red;
+}
+/* .ant-segmented-item:hover > .ant-segmented-item-label {
+  color: white;
+} */
+
+/* .ant-segmented-thumb {
   background-color: red;
 } */

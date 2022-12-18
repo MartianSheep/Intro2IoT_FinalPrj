@@ -5,6 +5,7 @@ import { Layout, Menu } from "antd";
 
 import items from "./MenuList";
 import MapWrapper from "../MapPage/MapWrapper";
+import LineMap from "../LineMap/LineMap";
 
 const { Content, Sider } = Layout;
 
@@ -37,8 +38,8 @@ function MainLayout(): JSX.Element {
           <Content style={{ margin: "0", border: "solid 1px blue" }}>
             {/* <MapWrapper /> */}
             <Routes>
-              <Route path="/map" element={<MapWrapper />}></Route>
-              <Route path="/cabin" element={<div>cabin</div>} />
+              <Route path="/map" element={<MapWrapper />} />
+              <Route path="/cabin" element={<LineMap />} />
             </Routes>
           </Content>
         </Layout>

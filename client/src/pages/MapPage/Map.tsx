@@ -2,25 +2,35 @@ import React from "react";
 import "./Map.css";
 import WorldLocations from "./WorldLocations";
 import WorldUtils from "./WorldUtils";
+import mountains from "./mountains.json";
 import { IgrGeographicMapModule } from "igniteui-react-maps";
 import { IgrGeographicMap } from "igniteui-react-maps";
 import { IgrGeographicSymbolSeries } from "igniteui-react-maps";
+import { IgrGeographicPolylineSeries } from "igniteui-react-maps";
 import { IgrDataChartInteractivityModule } from "igniteui-react-charts";
 import { IgrDataContext } from "igniteui-react-core";
+import { IgrShapeDataSource } from "igniteui-react-core";
 import { MarkerType } from "igniteui-react-charts";
+
+import {
+  IgrSeriesViewer,
+  IgrDataChartMouseButtonEventArgs,
+  IgrChartMouseEventArgs,
+} from "igniteui-react-charts";
 
 import { IgrBingMapsMapImagery } from "igniteui-react-maps";
 import { BingMapsImageryStyle } from "igniteui-react-maps";
 import { IgrArcGISOnlineMapImagery } from "igniteui-react-maps";
 import { EsriUtility, EsriStyle } from "./EsriUtils";
 
-import { Segmented } from "antd";
+import { Segmented, theme } from "antd";
 
 IgrGeographicMapModule.register();
 IgrDataChartInteractivityModule.register();
 
 interface MyState {
   mapMode: any;
+  tileSource: any;
 }
 type MyProps = {
   // using `interface` is also ok
@@ -39,46 +49,89 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     // this.onMapRef = this.onMapRef.bind(this);
     this.onMapRef = this.onMapRef.bind(this);
     this.createTooltip = this.createTooltip.bind(this);
+    this.changeTile = this.changeTile.bind(this);
+    this.zoomToNationPark = this.zoomToNationPark.bind(this);
+    this.onSeriesMouseLeftButtonUp = this.onSeriesMouseLeftButtonUp.bind(this);
+    this.onSeriesMouseEnter = this.onSeriesMouseEnter.bind(this);
   }
   state: MyState = {
-    mapMode: "test",
+    mapMode: "空照",
+    tileSource: this.initTile(),
   };
 
-  public onMapRef(geoMap: IgrGeographicMap) {
-    if (!geoMap) {
-      return;
-    }
+  public initTile(): IgrArcGISOnlineMapImagery {
     const tileSource = new IgrArcGISOnlineMapImagery();
-    tileSource.mapServerUri = EsriUtility.getUri(EsriStyle.WorldTopographicMap);
-    geoMap.backgroundContent = tileSource;
+    tileSource.mapServerUri = EsriUtility.getUri(EsriStyle.WorldSatelliteMap);
+    return tileSource;
+  }
 
-    // const tileSource = new IgrBingMapsMapImagery();
-    // tileSource.apiKey = WorldUtils.getBingKey();
-    // tileSource.imageryStyle = BingMapsImageryStyle.AerialWithLabels;
+  private changeTile(e: any) {
+    const tileSource = new IgrArcGISOnlineMapImagery();
+    let uriName = EsriStyle.WorldSatelliteMap;
+    if (e === "空照") {
+      uriName = EsriStyle.WorldSatelliteMap;
+    } else if (e === "等高線") {
+      uriName = EsriStyle.WorldTopographicMap;
+    } else if (e === "道路") {
+      uriName = EsriStyle.WorldStreetMap;
+    }
+    tileSource.mapServerUri = EsriUtility.getUri(uriName);
+    this.setState({ tileSource: tileSource });
+  }
 
-    // // resolving BingMaps uri based on HTTP protocol of hosting website
-    // let tileUri = tileSource.actualBingImageryRestUri;
-    // let isHttpSecured = window.location.toString().startsWith("https:");
-    // if (isHttpSecured) {
-    //   tileSource.bingImageryRestUri = tileUri.replace("http:", "https:");
-    // } else {
-    //   tileSource.bingImageryRestUri = tileUri.replace("https:", "http:");
-    // }
+  private zoomToNationPark(e: any) {
+    if (e === "雪霸") {
+      this.geoMap.zoomToGeographic({
+        left: 121,
+        top: 24.22,
+        width: 0.3,
+        height: 0.3,
+      });
+    } else if (e === "太魯閣") {
+      this.geoMap.zoomToGeographic({
+        left: 121.2,
+        top: 24.0,
+        width: 0.4,
+        height: 0.4,
+      });
+    } else if (e === "玉山") {
+      this.geoMap.zoomToGeographic({
+        left: 120.8,
+        top: 23.2,
+        width: 0.4,
+        height: 0.4,
+      });
+    } else {
+      this.geoMap.updateZoomWindow({
+        left: 0,
+        top: 0,
+        width: 1,
+        height: 1,
+      });
+    }
+  }
 
-    // geoMap.backgroundContent = tileSource;
-
+  public onMapRef(geoMap: IgrGeographicMap) {
+    if (!geoMap) return;
     this.geoMap = geoMap;
-    this.geoMap.updateZoomWindow({
-      left: 0.2,
-      top: 0.1,
-      width: 0.6,
-      height: 0.6,
-    });
-
-    this.addSeriesWith(WorldLocations.getCities(), "Orange");
-    this.addSeriesWith(WorldLocations.getCapitals(), "rgb(32, 146, 252)");
-
-    // optional - navigating to a map region
+    this.addSeriesWith(mountains, "rgba(0, 134, 133,0.6)", MarkerType.Pyramid);
+    this.addSeriesWith(
+      WorldLocations.getCities(),
+      "#3c9ae8",
+      MarkerType.Diamond
+    );
+  }
+  public onSeriesMouseLeftButtonUp(
+    viewer: IgrSeriesViewer,
+    event: IgrDataChartMouseButtonEventArgs
+  ) {
+    console.log(event.item);
+  }
+  public onSeriesMouseEnter(
+    viewer: IgrSeriesViewer,
+    event: IgrChartMouseEventArgs
+  ) {
+    console.log(event.item);
   }
 
   public render(): JSX.Element {
@@ -97,13 +150,24 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
             bottom: 0,
             right: 0,
             margin: 20,
-            backgroundColor: "#164c7e",
-            color: "white",
+            backgroundColor: "#9AC5FF",
           }}
-          options={["空照", "地名", "道路"]}
-          onChange={(e) => {
-            this.setState({ mapMode: e });
+          size="large"
+          options={["空照", "等高線", "道路"]}
+          onChange={this.changeTile}
+        />
+        <Segmented
+          style={{
+            position: "fixed",
+            zIndex: 1,
+            bottom: 60,
+            right: 0,
+            margin: 20,
+            backgroundColor: "#9AC5FF",
           }}
+          // size="medium"
+          options={["雪霸", "太魯閣", "玉山", "台灣"]}
+          onChange={this.zoomToNationPark}
         />
         <IgrGeographicMap
           ref={this.onMapRef}
@@ -111,42 +175,56 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
           height="100%"
           zoomable="true"
           worldRect={{ left: 120, top: 21.7, width: 2, height: 3.7 }}
+          backgroundContent={this.state.tileSource}
+          seriesMouseLeftButtonUp={this.onSeriesMouseLeftButtonUp}
+          seriesMouseEnter={this.onSeriesMouseEnter}
         />
       </div>
     );
   }
 
-  // public onMapRef(geoMap: IgrGeographicMap) {
-  //   if (!geoMap) {
-  //     return;
-  //   }
-
-  //   this.geoMap = geoMap;
-  //   this.geoMap.updateZoomWindow({
-  //     left: 0.2,
-  //     top: 0.1,
-  //     width: 0.6,
-  //     height: 0.6,
-  //   });
-
-  //   this.addSeriesWith(WorldLocations.getCities(), "Green");
-  //   this.addSeriesWith(WorldLocations.getCapitals(), "rgb(32, 146, 252)");
-  // }
-
-  public addSeriesWith(locations: any[], brush: string) {
+  public addSeriesWith(locations: any[], brush: string, shape: MarkerType) {
     const symbolSeries = new IgrGeographicSymbolSeries({
       name: "symbolSeries",
     });
     symbolSeries.dataSource = locations;
-    symbolSeries.markerType = MarkerType.Pyramid;
+    symbolSeries.markerType = shape;
     symbolSeries.latitudeMemberPath = "lat";
     symbolSeries.longitudeMemberPath = "lon";
-    symbolSeries.markerBrush = "White";
+    symbolSeries.markerBrush = "Transparent";
     symbolSeries.markerOutline = brush;
     symbolSeries.tooltipTemplate = this.createTooltip;
     symbolSeries.thickness = 10000;
 
     this.geoMap.series.add(symbolSeries);
+  }
+
+  public onDataLoaded(sds: IgrShapeDataSource, e: any) {
+    const shapeRecords = sds.getPointData();
+    console.log("loaded WorldCities.shp " + shapeRecords.length);
+
+    const geoPolylines: any[] = [];
+    // parsing shapefile data and creating geo-polygons
+    for (const record of shapeRecords) {
+      // using field/column names from .DBF file
+      const route = {
+        points: record.points,
+        name: record.fieldValues.Name,
+        capacity: record.fieldValues.CapacityG,
+        distance: record.fieldValues.DistanceKM,
+      };
+      geoPolylines.push(route);
+    }
+
+    const geoSeries = new IgrGeographicPolylineSeries({ name: "series" });
+    geoSeries.dataSource = geoPolylines;
+    geoSeries.shapeMemberPath = "points";
+    geoSeries.shapeFilterResolution = 0.0;
+    geoSeries.shapeStrokeThickness = 3;
+    geoSeries.shapeStroke = "rgb(0, 255, 82, 1)";
+    geoSeries.tooltipTemplate = this.createTooltip;
+
+    this.geoMap.series.add(geoSeries);
   }
 
   public createTooltip(context: any) {
