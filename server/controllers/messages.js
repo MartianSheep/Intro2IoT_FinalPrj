@@ -16,22 +16,39 @@ export const createMessage = async (req, res) => {
   try {
     const messageInfo = req.body;
 
+    console.log("===== Create Message =====");
+    console.log(messageInfo);
+
     // update devices
-    messageInfo.path.forEach(async (deviceId) => {
-      const foundDevice = await DeviceModel.findOne({ deviceId: deviceId });
+    for (let i = 0; i < messageInfo.path.length; i = i + 1) {
+      const foundDevice = await DeviceModel.findOne({
+        deviceId: messageInfo.path[i],
+      });
+      console.log(foundDevice);
       if (!foundDevice) {
         return res.status(403).send("Contains unknown device id");
       }
-    });
+    }
+    // messageInfo.path.forEach(async (deviceId) => {
+    //   const test = await DeviceModel.findOne({});
+    // });
     if (messageInfo.path[0] !== messageInfo.senderId) {
       return res.status(403).send("Sender id is not the first id in path");
     }
-    messageInfo.path.forEach(async (deviceId) => {
+
+    for (let i = 0; i < messageInfo.path.length; i = i + 1) {
       await DeviceModel.findOneAndUpdate(
-        { deviceId: deviceId },
+        { deviceId: messageInfo.path[i] },
         { lastActive: Date.now() }
       );
-    });
+    }
+
+    // messageInfo.path.forEach(async (deviceId) => {
+    //   await DeviceModel.findOneAndUpdate(
+    //     { deviceId: deviceId },
+    //     { lastActive: Date.now() }
+    //   );
+    // });
 
     if (messageInfo.messageType === 0) {
       // measurement
