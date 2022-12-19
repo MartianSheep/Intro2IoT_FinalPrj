@@ -5,7 +5,8 @@
 
 const char* ssid = "MakerSpace_2.4G";
 const char* password = "ntueesaad";
-const char* serverName = "https://iot-term-project-server.onrender.com/messages";
+//const char* serverName = "https://iot-term-project-server.onrender.com/messages";
+const char* serverName = "http://192.168.10.34:5000/messages";
 
 const int csPin = 5;
 const int resetPin = 2;
@@ -59,6 +60,8 @@ void loop() {
       if(WiFi.status()== WL_CONNECTED){
         WiFiClient client;
         HTTPClient http;
+
+      
       
         // Your Domain name with URL path or IP address with path
         http.begin(client, serverName);

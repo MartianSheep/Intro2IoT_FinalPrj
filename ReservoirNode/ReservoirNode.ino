@@ -13,10 +13,12 @@
 const int csPin = 5;
 const int resetPin = 2;
 const int irqPin = 4;
-const int helpPin = 36;
+const int helpPin = 34;
+const int batteryPin = 35;
 
 uint8_t MAC[6] = {0};
-String id = "";
+//String id = "";
+char id[18] = {0};
 const int capacity = JSON_OBJECT_SIZE(6) + JSON_ARRAY_SIZE(15);
 StaticJsonDocument<capacity> doc;
 
@@ -101,13 +103,16 @@ void setup() {
   btStop();
   // save energy
   setCpuFrequencyMhz(40);
+
+  pinMode(helpPin, INPUT_PULLDOWN);
+  pinMode(batteryPin, INPUT);
   
   Serial.begin(115200);
 
   for(int i = 0; i < 6; ++i)
     MAC[i] = (ESP.getEfuseMac() >> ((5-i)*8) & 0xff);
-//  Serial.printf("%02X:%02X:%02X:%02X:%02X:%02X\n", MAC[0],MAC[1],MAC[2],MAC[3],MAC[4],MAC[5]);
-  id = String(MAC[0], HEX) + ":" + String(MAC[1], HEX) + ":" + String(MAC[2], HEX) + ":" + String(MAC[3], HEX) + ":" + String(MAC[4], HEX) + ":" + String(MAC[5], HEX);
+  sprintf(id, "%02X:%02X:%02X:%02X:%02X:%02X", MAC[0],MAC[1],MAC[2],MAC[3],MAC[4],MAC[5]);
+//  id = String(MAC[0], HEX) + ":" + String(MAC[1], HEX) + ":" + String(MAC[2], HEX) + ":" + String(MAC[3], HEX) + ":" + String(MAC[4], HEX) + ":" + String(MAC[5], HEX);
 
   LoRa.setPins(csPin, resetPin, irqPin); // set CS, reset, IRQ pin
   if (!LoRa.begin(433E6)) {
@@ -127,7 +132,7 @@ void setup() {
     doc["electricity"] = -1;
     doc["ToFStatus"] = rangeStatus;
     doc["senderId"] = id;
-    doc["battery"] = 50;
+    doc["battery"] = analogRead(batteryPin);
     JsonArray path = doc.createNestedArray("path");
     path.add(id);
 
