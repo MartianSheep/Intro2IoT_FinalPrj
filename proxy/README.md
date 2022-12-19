@@ -6,7 +6,7 @@
 
 ## 架設 proxy server
 使用`cmd`或`git bash`，進到資料夾`/proxy`
-輸入以下指令:`yarn start`
+輸入以下指令:`yarn serve`
 
 接下來應該就會看到
 ![alt text](./proxy_setup.png)
