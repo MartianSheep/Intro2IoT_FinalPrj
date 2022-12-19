@@ -6,7 +6,7 @@
 const char* ssid = "MakerSpace_2.4G";
 const char* password = "ntueesaad";
 //const char* serverName = "https://iot-term-project-server.onrender.com/messages";
-const char* serverName = "http://192.168.10.34:5000/messages";
+const char* serverName = "http://192.168.10.142:5000/messages";
 
 const int csPin = 5;
 const int resetPin = 2;
