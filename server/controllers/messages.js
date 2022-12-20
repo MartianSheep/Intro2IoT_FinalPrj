@@ -15,8 +15,6 @@ export const getMessages = async (req, res) => {
 export const createMessage = async (req, res) => {
   try {
     const messageInfo = req.body;
-    const newMessage = new MessageModel(messageInfo);
-    await newMessage.save();
 
     console.log("===== Create Message =====");
     console.log(messageInfo);
@@ -52,10 +50,10 @@ export const createMessage = async (req, res) => {
       if (!cabin) {
         return res.status(404).send("Cabin not found");
       }
-      if (messageInfo.water < 0) cabin.water = messageInfo.water;
-      if (messageInfo.temperature < 0)
+      if (messageInfo.water >= 0) cabin.water = messageInfo.water;
+      if (messageInfo.temperature >= 0)
         cabin.temperature = messageInfo.temperature;
-      if (messageInfo.electricity < 0)
+      if (messageInfo.electricity >= 0)
         cabin.electricity = messageInfo.electricity;
 
       cabin.lastUpdated = Date.now();

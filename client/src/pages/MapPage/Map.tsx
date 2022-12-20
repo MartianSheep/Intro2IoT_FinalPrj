@@ -23,8 +23,13 @@ import { BingMapsImageryStyle } from "igniteui-react-maps";
 import { IgrArcGISOnlineMapImagery } from "igniteui-react-maps";
 import { EsriUtility, EsriStyle } from "./EsriUtils";
 
-import { Segmented, theme } from "antd";
+import { Segmented, theme, Typography, Select } from "antd";
+
+import moment from "moment";
+import "moment/locale/zh-tw";
+
 import axios from "../../apis/axios";
+import WaterIcon from "../TablePage/WaterIcon";
 
 IgrGeographicMapModule.register();
 IgrDataChartInteractivityModule.register();
@@ -80,21 +85,21 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
   }
 
   private zoomToNationPark(e: any) {
-    if (e === "雪霸") {
+    if (e === "雪霸國家公園") {
       this.geoMap.zoomToGeographic({
         left: 121,
         top: 24.22,
         width: 0.3,
         height: 0.3,
       });
-    } else if (e === "太魯閣") {
+    } else if (e === "太魯閣國家公園") {
       this.geoMap.zoomToGeographic({
         left: 121.2,
         top: 24.0,
         width: 0.4,
         height: 0.4,
       });
-    } else if (e === "玉山") {
+    } else if (e === "玉山國家公園") {
       this.geoMap.zoomToGeographic({
         left: 120.8,
         top: 23.2,
@@ -143,7 +148,6 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
         style={{
           height: "100%",
           width: "100%",
-          border: "1px solid yellow",
         }}
       >
         <Segmented
@@ -153,24 +157,43 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
             bottom: 0,
             right: 0,
             margin: 20,
-            backgroundColor: "#9AC5FF",
+            backgroundColor: "#f0f0f0",
           }}
           size="large"
           options={["空照", "等高線", "道路"]}
           onChange={this.changeTile}
         />
-        <Segmented
+
+        <Select
+          defaultValue="選擇區域"
           style={{
             position: "fixed",
             zIndex: 1,
-            bottom: 60,
+            top: 0,
             right: 0,
             margin: 20,
-            backgroundColor: "#9AC5FF",
+            width: 150,
           }}
-          // size="medium"
-          options={["雪霸", "太魯閣", "玉山", "台灣"]}
           onChange={this.zoomToNationPark}
+          options={[
+            {
+              value: "雪霸國家公園",
+              label: "雪霸國家公園",
+            },
+            {
+              value: "太魯閣國家公園",
+              label: "太魯閣國家公園",
+            },
+
+            {
+              value: "玉山國家公園",
+              label: "玉山國家公園",
+            },
+            {
+              value: "台灣",
+              label: "台灣",
+            },
+          ]}
         />
         <IgrGeographicMap
           ref={this.onMapRef}
@@ -218,22 +241,24 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     return (
       <div>
         <div className="tooltipTitle" style={seriesStyle}>
-          {dataItem.name}
+          <Typography.Title level={5}>{dataItem.name}</Typography.Title>
         </div>
-        <div className="tooltipBox">
-          <div className="tooltipRow">
-            <div className="tooltipLbl">Country:</div>
-            <div className="tooltipVal">{dataItem.country}</div>
-          </div>
-          <div className="tooltipRow">
-            <div className="tooltipLbl">Latitude:</div>
-            <div className="tooltipVal">{lat}</div>
-          </div>
-          <div className="tooltipRow">
-            <div className="tooltipLbl">Longitude:</div>
-            <div className="tooltipVal">{lon}</div>
-          </div>
-        </div>
+
+        {dataItem.water >= 0 && dataItem.water !== undefined ? (
+          <>
+            <WaterIcon
+              number={Math.round(
+                (dataItem.water * 5) /
+                  (dataItem.waterEmpty - dataItem.waterFull)
+              )}
+            />
+            <Typography.Text type="secondary">
+              上次更新：{moment(dataItem.lastUpdated).locale("zh-tw").fromNow()}
+            </Typography.Text>
+          </>
+        ) : (
+          <Typography.Text type="secondary">無資料</Typography.Text>
+        )}
       </div>
     );
   }
