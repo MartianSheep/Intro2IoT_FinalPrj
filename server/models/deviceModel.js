@@ -10,6 +10,7 @@ const deviceModel = mongoose.Schema({
   emergency: { type: Boolean, default: false },
 
   lastActive: { type: Date },
+  battery: { type: Number },
 
   createdAt: {
     type: Date,
