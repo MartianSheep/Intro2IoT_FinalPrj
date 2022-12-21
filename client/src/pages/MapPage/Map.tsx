@@ -40,14 +40,10 @@ interface MyState {
   tileSource: any;
 }
 type MyProps = {
-  // using `interface` is also ok
   message?: string;
 };
 
-export default class MapTypeScatterSymbolSeries extends React.Component<
-  MyProps,
-  MyState
-> {
+export default class Map extends React.Component<MyProps, MyState> {
   public geoMap!: IgrGeographicMap;
 
   constructor(props: any) {
@@ -124,7 +120,6 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     const devicesData: any = await axios.get("devices");
 
     this.geoMap = geoMap;
-    // this.addSeriesWith(mountains, "rgba(0, 134, 133,0.6)", MarkerType.Pyramid);
     this.addSeriesWith(cabinsData, "#c17500", MarkerType.Diamond);
     // this.addSeriesWith(devicesData, "red", MarkerType.Triangle);
   }
@@ -147,7 +142,7 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     return (
       <div
         style={{
-          height: "100%",
+          height: "100vh",
           width: "100%",
         }}
       >

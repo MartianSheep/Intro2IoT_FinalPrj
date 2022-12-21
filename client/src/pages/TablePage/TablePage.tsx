@@ -16,12 +16,11 @@ import "moment/locale/zh-tw";
 //   <Icon component={component} />
 // ));
 
-interface DataType {
+interface CabinDataType {
   name: string;
   key: string;
   water: number;
   electricity: number;
-  // temperature: number;
   lastUpdated: string;
   tags: string[];
   link: string;
@@ -33,15 +32,11 @@ const TablePage = (): JSX.Element => {
   } = theme.useToken();
   const [cabins, setCabins] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalLink, setModalLink] = useState("");
+  const [modalInfo, setModalInfo] = useState<CabinDataType>();
 
-  const showModal = (link: string) => {
+  const showModal = (cabin: CabinDataType) => {
     setIsModalOpen(true);
-    setModalLink(link);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
+    setModalInfo(cabin);
   };
 
   const handleCancel = () => {
@@ -67,16 +62,16 @@ const TablePage = (): JSX.Element => {
     fetchData().catch(console.error);
   }, []);
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<CabinDataType> = [
     {
       title: "山屋",
       dataIndex: ["name"],
       key: "name",
-      render: (name, link) => (
+      render: (name, cabin) => (
         <Button
           type="link"
           style={{ fontWeight: "bold", color: "#007b43" }}
-          onClick={() => showModal(link.link)}
+          onClick={() => showModal(cabin)}
         >
           {/* <Typography.Link
             strong
@@ -147,12 +142,17 @@ const TablePage = (): JSX.Element => {
       }}
     >
       <Modal
-        title="Basic Modal"
+        title={modalInfo?.name}
         open={isModalOpen}
-        onOk={handleOk}
+        // onOk={handleOk}
         onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel} type="primary">
+            <Typography.Text style={{ color: "white" }}>關閉</Typography.Text>
+          </Button>,
+        ]}
       >
-        <iframe src={modalLink}></iframe>
+        {<a href={modalInfo?.link}>詳細資料</a>}
       </Modal>
       <Table dataSource={cabins} columns={columns} style={{ margin: 20 }} />
     </div>

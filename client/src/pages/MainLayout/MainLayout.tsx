@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout, Menu, theme, Typography } from "antd";
 
 import items from "./MenuList";
-import MapWrapper from "../MapPage/MapWrapper";
+// import MapWrapper from "../MapPage/MapWrapper";
+import Map from "../MapPage/Map";
 import LineMap from "../LineMap/LineMap";
 import TablePage from "../TablePage/TablePage";
 
@@ -50,13 +51,11 @@ function MainLayout(): JSX.Element {
           />
         </Sider>
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
-          {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
           <Content style={{ margin: "0", overflow: "initial" }}>
-            {/* <MapWrapper /> */}
             <Routes>
               <Route path="/cabin" element={<TablePage />} />
-              <Route path="/map" element={<MapWrapper />} />
-              <Route path="/admin" element={<>admin</>} />
+              <Route path="/map" element={<Map />} />
+              <Route path="/devices" element={<LineMap />} />
             </Routes>
           </Content>
         </Layout>
