@@ -84,6 +84,7 @@ float Ranging() {
     }
     // failed, use infrared
     int value = analogRead(infraredPin);
+    rangeStatus = -1;
     return 20.0 / (value*3.3/4095.0 - 0.3);
 }
 
@@ -163,7 +164,7 @@ void setup() {
     doc["electricity"] = -1;
     doc["ToFStatus"] = -1;
     doc["senderId"] = id;
-    doc["battery"] = 50;
+    doc["battery"] = analogRead(batteryPin);
     JsonArray path = doc.createNestedArray("path");
     path.add(id);
 
