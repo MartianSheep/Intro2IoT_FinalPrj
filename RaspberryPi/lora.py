@@ -33,14 +33,16 @@ class LoRaRcvCont(LoRa):
     def on_rx_done(self):
         print("\nReceived: ")
         self.clear_irq_flags(RxDone=1)
-        payload = self.read_payload(nocheck=True)
-        payload = json.loads(bytes(payload).decode("utf-8",'ignore'))
-        print(type(payload))
-        res = requests.post(baseUrl, json=payload)
-        print(res.status_code)
-        if res.status_code != 200:
-            print(res.text)
-
+        payload = self.read_payload(nocheck=False)
+        try:
+            payload = json.loads(bytes(payload).decode("utf-8",'ignore'))
+            res = requests.post(baseUrl, json=payload)
+            print(res.status_code)
+            if res.status_code != 200:
+                print(res.text)
+        except:
+            print(payload)
+            print(type(payload))
         self.set_mode(MODE.SLEEP)
         self.reset_ptr_rx()
         self.set_mode(MODE.RXCONT) 
