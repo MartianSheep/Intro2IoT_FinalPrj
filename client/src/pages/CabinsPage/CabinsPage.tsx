@@ -24,6 +24,8 @@ interface CabinDataType {
   lastUpdated: string;
   tags: string[];
   link: string;
+  waterEmpty: number;
+  waterFull: number;
 }
 
 const CabinsPage = (): JSX.Element => {
@@ -33,6 +35,16 @@ const CabinsPage = (): JSX.Element => {
   const [cabins, setCabins] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalInfo, setModalInfo] = useState<CabinDataType>();
+
+  const waterCal = (cabinData: CabinDataType) => {
+    if (cabinData.water === undefined || cabinData.water < 0) return -1;
+    let res: number = Math.round(
+      (cabinData.water * 5) / (cabinData.waterEmpty - cabinData.waterFull)
+    );
+    if (res > 5) res = 5;
+    if (res < 0) res = 0;
+    return res;
+  };
 
   const showModal = (cabin: CabinDataType) => {
     setIsModalOpen(true);
@@ -48,12 +60,9 @@ const CabinsPage = (): JSX.Element => {
       const data: any = await axios.get("cabins");
 
       setCabins(
-        data.map((d: any) => ({
+        data.map((d: CabinDataType) => ({
           ...d,
-          water:
-            d.water >= 0
-              ? Math.round((d.water * 5) / (d.waterEmpty - d.waterFull))
-              : -1,
+          water: waterCal(d),
         }))
       );
     };

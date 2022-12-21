@@ -31,7 +31,14 @@ const DevicesPage = (): JSX.Element => {
     token: { colorBgContainer },
   } = theme.useToken();
   const [devices, setDevices] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const batteryCal = (raw: number) => {
+    if (raw === undefined || raw < 0) return -1;
+    let res: number = Math.round((raw - 900) / 52);
+    if (res > 5) res = 5;
+    if (res < 0) res = 0;
+    return res;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,55 +52,55 @@ const DevicesPage = (): JSX.Element => {
 
   const columns: ColumnsType<CabinDataType> = [
     {
-      title: "山屋",
-      dataIndex: ["name"],
+      title: "代號",
+      dataIndex: "name",
       key: "name",
-      render: (name, cabin) => (
-        <Button type="link" style={{ fontWeight: "bold", color: "#007b43" }}>
-          {name}
-        </Button>
-      ),
+      render: (name) => <Typography.Text>{name}</Typography.Text>,
     },
     {
-      title: "標籤",
-      dataIndex: "tags",
-      key: "tags",
-      render: (tags: any) => (
-        <div style={{ maxWidth: "100%" }}>
-          {tags.map((tag: any) => (
-            <Tag color={"green"} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          ))}
-        </div>
-      ),
-    },
-    {
-      title: "水量",
-      dataIndex: "water",
-      key: "water",
+      title: "類型",
+      dataIndex: "type",
+      key: "type",
       render: (data) =>
-        data && data >= 0 ? (
-          <IconArray number={data} type="water" />
+        data === "gateway" ? (
+          <Tag color="volcano">閘道</Tag>
         ) : (
-          <Typography.Text type="secondary">無資料</Typography.Text>
+          <Tag color="green">普通</Tag>
         ),
     },
     {
       title: "電量",
-      dataIndex: "electricity",
-      key: "electricity",
+      dataIndex: "battery",
+      key: "battery",
       render: (data) =>
         data && data >= 0 ? (
-          <IconArray number={data} type="electricity" />
+          <IconArray number={batteryCal(data)} type="electricity" />
         ) : (
           <Typography.Text type="secondary">無資料</Typography.Text>
         ),
     },
     {
-      title: "上次更新",
-      dataIndex: "lastUpdated",
-      key: "lastUpdated",
+      title: "經度",
+      dataIndex: "lon",
+      key: "lon",
+      render: (data) => data.toFixed(4),
+    },
+    {
+      title: "緯度",
+      dataIndex: "lat",
+      key: "lat",
+      render: (data) => data.toFixed(4),
+    },
+
+    {
+      title: "海拔",
+      dataIndex: "elevation",
+      key: "elevation",
+    },
+    {
+      title: "上次活動",
+      dataIndex: "lastActive",
+      key: "lastActive",
       render: (text) =>
         text ? (
           <Typography.Text type="secondary">

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const deviceModel = mongoose.Schema({
   deviceId: { type: String, required: true },
+  name: { type: String, required: true },
 
   lon: { type: Number, required: true },
   lat: { type: Number, required: true },
@@ -11,6 +12,7 @@ const deviceModel = mongoose.Schema({
 
   lastActive: { type: Date },
   battery: { type: Number },
+  type: { type: String, required: true },
 
   createdAt: {
     type: Date,

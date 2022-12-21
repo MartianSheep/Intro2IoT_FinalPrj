@@ -8,6 +8,7 @@ import items from "./MenuList";
 import Map from "../MapPage/Map";
 import LineMap from "../LineMap/LineMap";
 import CabinsPage from "../CabinsPage/CabinsPage";
+import DevicesPage from "../DevicesPage/DevicesPage";
 
 const { Content, Sider, Header, Footer } = Layout;
 
@@ -41,7 +42,7 @@ function MainLayout(): JSX.Element {
               // paddingLeft: 30,
             }}
           >
-            <Typography.Title level={2}>第13組</Typography.Title>
+            <Typography.Title level={3}>相逢就是有緣</Typography.Title>
           </div>
           <Menu
             theme="light"
@@ -55,7 +56,7 @@ function MainLayout(): JSX.Element {
             <Routes>
               <Route path="/cabin" element={<CabinsPage />} />
               <Route path="/map" element={<Map />} />
-              <Route path="/devices" element={<LineMap />} />
+              <Route path="/devices" element={<DevicesPage />} />
             </Routes>
           </Content>
         </Layout>

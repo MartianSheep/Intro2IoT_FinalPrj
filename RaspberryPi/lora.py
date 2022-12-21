@@ -14,7 +14,7 @@ baseUrl = "https://iot-term-project-server.onrender.com/messages"
 
 BOARD.setup()
 print("board setup!!!")
-MAC_ADDR = gma()
+MAC_ADDR = gma().upper()
 print("Mac Address: ")
 print(MAC_ADDR)
 
