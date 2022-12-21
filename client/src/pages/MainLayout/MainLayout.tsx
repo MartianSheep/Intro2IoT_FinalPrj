@@ -34,7 +34,7 @@ function MainLayout(): JSX.Element {
             style={{
               height: 64,
               margin: 0,
-              background: "rgba(0, 255, 255, 0.2)",
+              // background: "rgba(0, 255, 255, 0.2)",
               display: "flex",
               justifyContent: "center",
               // alignItems: "center",
@@ -42,7 +42,7 @@ function MainLayout(): JSX.Element {
               // paddingLeft: 30,
             }}
           >
-            <Typography.Title level={3}>相逢就是有緣</Typography.Title>
+            <Typography.Title level={3}>誠徵Logo</Typography.Title>
           </div>
           <Menu
             theme="light"
@@ -54,7 +54,7 @@ function MainLayout(): JSX.Element {
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Content style={{ margin: "0", overflow: "initial" }}>
             <Routes>
-              <Route path="/cabin" element={<CabinsPage />} />
+              <Route path="/" element={<CabinsPage />} />
               <Route path="/map" element={<Map />} />
               <Route path="/devices" element={<DevicesPage />} />
             </Routes>
