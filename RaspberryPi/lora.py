@@ -5,6 +5,7 @@ from SX127x.board_config import BOARD
 
 import sys
 import requests
+import json
 baseUrl = "https://iot-term-project-server.onrender.com/messages"
 
 
@@ -33,7 +34,8 @@ class LoRaRcvCont(LoRa):
         print("\nReceived: ")
         self.clear_irq_flags(RxDone=1)
         payload = self.read_payload(nocheck=True)
-        payload = bytes(payload).decode("utf-8",'ignore')
+        payload = json.loads(bytes(payload).decode("utf-8",'ignore'))
+        print(type(payload))
         res = requests.post(baseUrl, json=payload)
         print(res.status_code)
         if res.status_code != 200:
