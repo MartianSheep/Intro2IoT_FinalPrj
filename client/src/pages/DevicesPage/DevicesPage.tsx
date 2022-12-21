@@ -16,14 +16,16 @@ import "moment/locale/zh-tw";
 //   <Icon component={component} />
 // ));
 
-interface CabinDataType {
+interface DeviceDataType {
   name: string;
-  key: string;
-  water: number;
+  deviceId: string;
+  battery: number;
   electricity: number;
-  lastUpdated: string;
-  tags: string[];
-  link: string;
+  lastActive: string;
+  emergency: boolean;
+  lon: number;
+  lat: number;
+  elevation: number;
 }
 
 const DevicesPage = (): JSX.Element => {
@@ -50,12 +52,25 @@ const DevicesPage = (): JSX.Element => {
     fetchData().catch(console.error);
   }, []);
 
-  const columns: ColumnsType<CabinDataType> = [
+  const columns: ColumnsType<DeviceDataType> = [
     {
       title: "代號",
       dataIndex: "name",
       key: "name",
-      render: (name) => <Typography.Text>{name}</Typography.Text>,
+      render: (name, devices) =>
+        devices.emergency ? (
+          <>
+            <Typography.Text strong type="danger">
+              {name}
+            </Typography.Text>
+            <div></div>
+            <Typography.Text type="danger">
+              此處可能發生警急事件
+            </Typography.Text>
+          </>
+        ) : (
+          <Typography.Text strong>{name}</Typography.Text>
+        ),
     },
     {
       title: "類型",
@@ -73,7 +88,7 @@ const DevicesPage = (): JSX.Element => {
       dataIndex: "battery",
       key: "battery",
       render: (data) =>
-        data && data >= 0 ? (
+        data !== undefined && data >= 0 ? (
           <IconArray number={batteryCal(data)} type="electricity" />
         ) : (
           <Typography.Text type="secondary">無資料</Typography.Text>

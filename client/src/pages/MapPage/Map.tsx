@@ -42,7 +42,17 @@ interface MyState {
 type MyProps = {
   message?: string;
 };
-
+interface CabinDataType {
+  name: string;
+  key: string;
+  water: number;
+  electricity: number;
+  lastUpdated: string;
+  tags: string[];
+  link: string;
+  waterEmpty: number;
+  waterFull: number;
+}
 export default class Map extends React.Component<MyProps, MyState> {
   public geoMap!: IgrGeographicMap;
 
@@ -53,8 +63,8 @@ export default class Map extends React.Component<MyProps, MyState> {
     this.createTooltip = this.createTooltip.bind(this);
     this.changeTile = this.changeTile.bind(this);
     this.zoomToNationPark = this.zoomToNationPark.bind(this);
-    this.onSeriesMouseLeftButtonUp = this.onSeriesMouseLeftButtonUp.bind(this);
-    this.onSeriesMouseEnter = this.onSeriesMouseEnter.bind(this);
+    // this.onSeriesMouseLeftButtonUp = this.onSeriesMouseLeftButtonUp.bind(this);
+    // this.onSeriesMouseEnter = this.onSeriesMouseEnter.bind(this);
   }
   state: MyState = {
     mapMode: "空照",
@@ -120,22 +130,12 @@ export default class Map extends React.Component<MyProps, MyState> {
     const devicesData: any = await axios.get("devices");
 
     this.geoMap = geoMap;
-    this.addSeriesWith(cabinsData, "#c17500", MarkerType.Diamond);
-    // this.addSeriesWith(devicesData, "red", MarkerType.Triangle);
-  }
-  public onSeriesMouseLeftButtonUp(
-    viewer: IgrSeriesViewer,
-    event: IgrDataChartMouseButtonEventArgs
-  ) {
-    console.log(event.item);
-
-    // this.geoMap.series.remove();
-  }
-  public onSeriesMouseEnter(
-    viewer: IgrSeriesViewer,
-    event: IgrChartMouseEventArgs
-  ) {
-    console.log(event.item);
+    this.addCabinsSeriesWith(cabinsData, "#c17500", MarkerType.Diamond);
+    this.addEmergencySeriesWith(
+      devicesData.filter((d: any) => d.emergency),
+      "red",
+      MarkerType.Triangle
+    );
   }
 
   public render(): JSX.Element {
@@ -198,14 +198,18 @@ export default class Map extends React.Component<MyProps, MyState> {
           zoomable="true"
           worldRect={{ left: 120, top: 21.7, width: 2, height: 3.7 }}
           backgroundContent={this.state.tileSource}
-          seriesMouseLeftButtonUp={this.onSeriesMouseLeftButtonUp}
-          seriesMouseEnter={this.onSeriesMouseEnter}
+          // seriesMouseLeftButtonUp={this.onSeriesMouseLeftButtonUp}
+          // seriesMouseEnter={this.onSeriesMouseEnter}
         />
       </div>
     );
   }
 
-  public addSeriesWith(locations: any[], brush: string, shape: MarkerType) {
+  public addCabinsSeriesWith(
+    locations: any[],
+    brush: string,
+    shape: MarkerType
+  ) {
     const symbolSeries = new IgrGeographicSymbolSeries({
       name: "symbolSeries",
     });
@@ -220,7 +224,63 @@ export default class Map extends React.Component<MyProps, MyState> {
 
     this.geoMap.series.add(symbolSeries);
   }
+  public addEmergencySeriesWith(
+    locations: any[],
+    brush: string,
+    shape: MarkerType
+  ) {
+    const symbolSeries = new IgrGeographicSymbolSeries({
+      name: "symbolSeries",
+    });
+    symbolSeries.dataSource = locations;
+    symbolSeries.markerType = shape;
+    symbolSeries.latitudeMemberPath = "lat";
+    symbolSeries.longitudeMemberPath = "lon";
+    symbolSeries.markerBrush = "White";
+    symbolSeries.markerOutline = brush;
+    symbolSeries.tooltipTemplate = this.createEmergencyTooltip;
+    symbolSeries.thickness = 10000;
 
+    this.geoMap.series.add(symbolSeries);
+  }
+
+  public waterCal(cabinData: CabinDataType) {
+    if (cabinData.water === undefined || cabinData.water < 0) return -1;
+    let res: number = Math.round(
+      (cabinData.water * 5) / (cabinData.waterEmpty - cabinData.waterFull)
+    );
+    if (res > 5) res = 5;
+    if (res < 0) res = 0;
+
+    res = 5 - res;
+    return res;
+  }
+
+  public createEmergencyTooltip(context: any) {
+    const dataContext = context.dataContext as IgrDataContext;
+    if (!dataContext) return null;
+
+    const dataItem = dataContext.item as any;
+    if (!dataItem) return null;
+
+    const brush = dataContext.series.markerOutline;
+    return (
+      <div>
+        <Typography.Title level={5} type="danger">
+          {dataItem.name}
+        </Typography.Title>
+        <Typography.Text type="danger">此處可能發生警急事件</Typography.Text>
+        <div></div>
+        <Typography.Text type="secondary">緯度：{dataItem.lat}</Typography.Text>
+        <div></div>
+        <Typography.Text type="secondary">經度：{dataItem.lon}</Typography.Text>
+        <div></div>
+        <Typography.Text type="secondary">
+          海拔：{dataItem.elevation}
+        </Typography.Text>
+      </div>
+    );
+  }
   public createTooltip(context: any) {
     const dataContext = context.dataContext as IgrDataContext;
     if (!dataContext) return null;
@@ -236,15 +296,9 @@ export default class Map extends React.Component<MyProps, MyState> {
         <div className="tooltipTitle" style={seriesStyle}>
           <Typography.Title level={5}>{dataItem.name}</Typography.Title>
         </div>
-        {dataItem.water >= 0 && dataItem.water !== undefined ? (
+        {this.waterCal(dataItem) >= 0 && dataItem.water !== undefined ? (
           <>
-            <IconArray
-              number={Math.round(
-                (dataItem.water * 5) /
-                  (dataItem.waterEmpty - dataItem.waterFull)
-              )}
-              type="water"
-            />
+            <IconArray number={this.waterCal(dataItem)} type="water" />
           </>
         ) : (
           <Typography.Text type="secondary">水量無資料</Typography.Text>

@@ -41,8 +41,12 @@ const CabinsPage = (): JSX.Element => {
     let res: number = Math.round(
       (cabinData.water * 5) / (cabinData.waterEmpty - cabinData.waterFull)
     );
+    console.log(res);
     if (res > 5) res = 5;
     if (res < 0) res = 0;
+
+    res = 5 - res;
+    console.log(res);
     return res;
   };
 
@@ -111,7 +115,7 @@ const CabinsPage = (): JSX.Element => {
       dataIndex: "water",
       key: "water",
       render: (data) =>
-        data && data >= 0 ? (
+        data !== undefined && data >= 0 ? (
           <IconArray number={data} type="water" />
         ) : (
           <Typography.Text type="secondary">無資料</Typography.Text>
@@ -122,7 +126,7 @@ const CabinsPage = (): JSX.Element => {
       dataIndex: "electricity",
       key: "electricity",
       render: (data) =>
-        data && data >= 0 ? (
+        data !== undefined && data >= 0 ? (
           <IconArray number={data} type="electricity" />
         ) : (
           <Typography.Text type="secondary">無資料</Typography.Text>
