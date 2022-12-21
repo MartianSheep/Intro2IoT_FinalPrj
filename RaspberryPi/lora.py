@@ -34,7 +34,7 @@ class LoRaRcvCont(LoRa):
     def on_rx_done(self):
         print("\nReceived: ")
         self.clear_irq_flags(RxDone=1)
-        payload = self.read_payload(nocheck=False)
+        payload = self.read_payload(nocheck=True)
         try:
             payload = json.loads(bytes(payload).decode("utf-8",'ignore'))
             res = requests.post(baseUrl, json=payload)
@@ -49,7 +49,7 @@ class LoRaRcvCont(LoRa):
         self.set_mode(MODE.RXCONT) 
 
 
-lora = LoRaRcvCont(verbose=False)
+lora = LoRaRcvCont(verbose=True)
 lora.set_mode(MODE.STDBY)
 
 print(lora.get_freq())
