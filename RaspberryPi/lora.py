@@ -15,7 +15,8 @@ baseUrl = "https://iot-term-project-server.onrender.com/messages"
 BOARD.setup()
 print("board setup!!!")
 MAC_ADDR = gma()
-print(f"Mac Address: {MAC_ADDR}")
+print("Mac Address: ")
+print(MAC_ADDR)
 
 
 class LoRaRcvCont(LoRa):
