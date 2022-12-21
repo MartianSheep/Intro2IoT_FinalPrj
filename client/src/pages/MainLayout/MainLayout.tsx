@@ -56,6 +56,7 @@ function MainLayout(): JSX.Element {
             <Routes>
               <Route path="/cabin" element={<TablePage />} />
               <Route path="/map" element={<MapWrapper />} />
+              <Route path="/admin" element={<>admin</>} />
             </Routes>
           </Content>
         </Layout>

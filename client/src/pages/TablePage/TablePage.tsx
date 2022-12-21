@@ -1,4 +1,4 @@
-import { Table, theme, Typography, Tag } from "antd";
+import { Table, theme, Typography, Tag, Modal, Button } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Icon from "@ant-design/icons";
 
@@ -6,7 +6,8 @@ import WaterSvg from "../../svgs/water-bottle.svg";
 
 import React, { useEffect, useState } from "react";
 import axios from "../../apis/axios";
-import WaterIcon from "./WaterIcon";
+// import WaterIcon from "./WaterIcon";
+import IconArray from "../../containers/IconArray";
 
 import moment from "moment";
 import "moment/locale/zh-tw";
@@ -23,6 +24,7 @@ interface DataType {
   // temperature: number;
   lastUpdated: string;
   tags: string[];
+  link: string;
 }
 
 const TablePage = (): JSX.Element => {
@@ -30,18 +32,34 @@ const TablePage = (): JSX.Element => {
     token: { colorBgContainer },
   } = theme.useToken();
   const [cabins, setCabins] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalLink, setModalLink] = useState("");
+
+  const showModal = (link: string) => {
+    setIsModalOpen(true);
+    setModalLink(link);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       const data: any = await axios.get("cabins");
 
       setCabins(
-        data
-          .filter((d: any) => d.water !== undefined && d.water >= 0)
-          .map((d: any) => ({
-            ...d,
-            water: Math.round((d.water * 5) / (d.waterEmpty - d.waterFull)),
-          }))
+        data.map((d: any) => ({
+          ...d,
+          water:
+            d.water >= 0
+              ? Math.round((d.water * 5) / (d.waterEmpty - d.waterFull))
+              : -1,
+        }))
       );
     };
 
@@ -52,52 +70,72 @@ const TablePage = (): JSX.Element => {
   const columns: ColumnsType<DataType> = [
     {
       title: "山屋",
-      dataIndex: "name",
+      dataIndex: ["name"],
       key: "name",
-      render: (text) => <Typography.Title level={5}>{text}</Typography.Title>,
+      render: (name, link) => (
+        <Button
+          type="link"
+          style={{ fontWeight: "bold", color: "#007b43" }}
+          onClick={() => showModal(link.link)}
+        >
+          {/* <Typography.Link
+            strong
+            style={{ color: "#007b43" }}
+            href={link.link ? link.link : ""}
+          > */}
+          {name}
+          {/* </Typography.Link> */}
+        </Button>
+      ),
     },
     {
       title: "標籤",
       dataIndex: "tags",
       key: "tags",
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
+      render: (tags: any) => (
+        <div style={{ maxWidth: "100%" }}>
+          {tags.map((tag: any) => (
+            <Tag color={"green"} key={tag}>
+              {tag.toUpperCase()}
+            </Tag>
+          ))}
+        </div>
       ),
     },
     {
       title: "水量",
       dataIndex: "water",
       key: "water",
-      render: (data) => <WaterIcon number={data} />,
+      render: (data) =>
+        data && data >= 0 ? (
+          <IconArray number={data} type="water" />
+        ) : (
+          <Typography.Text type="secondary">無資料</Typography.Text>
+        ),
     },
     {
       title: "電量",
       dataIndex: "electricity",
       key: "electricity",
       render: (data) =>
-        data && data >= 0 ? <WaterIcon number={data} /> : <></>,
+        data && data >= 0 ? (
+          <IconArray number={data} type="electricity" />
+        ) : (
+          <Typography.Text type="secondary">無資料</Typography.Text>
+        ),
     },
     {
       title: "上次更新",
       dataIndex: "lastUpdated",
       key: "lastUpdated",
-      render: (text) => (
-        <Typography.Text type="secondary">
-          {moment(text).locale("zh-tw").fromNow()}
-        </Typography.Text>
-      ),
+      render: (text) =>
+        text ? (
+          <Typography.Text type="secondary">
+            {moment(text).locale("zh-tw").fromNow()}
+          </Typography.Text>
+        ) : (
+          <Typography.Text type="secondary">無資料</Typography.Text>
+        ),
     },
   ];
 
@@ -105,10 +143,17 @@ const TablePage = (): JSX.Element => {
     <div
       style={{
         height: "100vh",
-        // border: "1px purple solid",
         overflow: "scroll",
       }}
     >
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <iframe src={modalLink}></iframe>
+      </Modal>
       <Table dataSource={cabins} columns={columns} style={{ margin: 20 }} />
     </div>
   );

@@ -26,7 +26,7 @@ const items: MenuItem[] = [
   getItem(
     <Link to="/cabin">
       <DesktopOutlined />
-      <span>列表</span>
+      <span>山屋水情</span>
     </Link>,
     "1"
   ),

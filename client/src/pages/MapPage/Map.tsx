@@ -29,7 +29,8 @@ import moment from "moment";
 import "moment/locale/zh-tw";
 
 import axios from "../../apis/axios";
-import WaterIcon from "../TablePage/WaterIcon";
+
+import IconArray from "../../containers/IconArray";
 
 IgrGeographicMapModule.register();
 IgrDataChartInteractivityModule.register();
@@ -124,8 +125,8 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
 
     this.geoMap = geoMap;
     // this.addSeriesWith(mountains, "rgba(0, 134, 133,0.6)", MarkerType.Pyramid);
-    this.addSeriesWith(cabinsData, "#3c9ae8", MarkerType.Diamond);
-    this.addSeriesWith(devicesData, "red", MarkerType.Triangle);
+    this.addSeriesWith(cabinsData, "#c17500", MarkerType.Diamond);
+    // this.addSeriesWith(devicesData, "red", MarkerType.Triangle);
   }
   public onSeriesMouseLeftButtonUp(
     viewer: IgrSeriesViewer,
@@ -217,7 +218,7 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     symbolSeries.markerType = shape;
     symbolSeries.latitudeMemberPath = "lat";
     symbolSeries.longitudeMemberPath = "lon";
-    symbolSeries.markerBrush = "Transparent";
+    symbolSeries.markerBrush = "White";
     symbolSeries.markerOutline = brush;
     symbolSeries.tooltipTemplate = this.createTooltip;
     symbolSeries.thickness = 10000;
@@ -235,29 +236,37 @@ export default class MapTypeScatterSymbolSeries extends React.Component<
     const brush = dataContext.series.markerOutline;
     const seriesStyle = { color: brush } as React.CSSProperties;
 
-    const lat = WorldUtils.toStringLat(dataItem.lat);
-    const lon = WorldUtils.toStringLon(dataItem.lon);
-
     return (
       <div>
         <div className="tooltipTitle" style={seriesStyle}>
           <Typography.Title level={5}>{dataItem.name}</Typography.Title>
         </div>
-
         {dataItem.water >= 0 && dataItem.water !== undefined ? (
           <>
-            <WaterIcon
+            <IconArray
               number={Math.round(
                 (dataItem.water * 5) /
                   (dataItem.waterEmpty - dataItem.waterFull)
               )}
+              type="water"
             />
+          </>
+        ) : (
+          <Typography.Text type="secondary">水量無資料</Typography.Text>
+        )}
+        <div style={{ height: 10 }}></div>
+        {dataItem.electricity >= 0 && dataItem.electricity !== undefined ? (
+          <IconArray number={dataItem.electricity} type="electricity" />
+        ) : (
+          <Typography.Text type="secondary">電量無資料</Typography.Text>
+        )}
+        <div style={{ height: 10 }}></div>
+        {dataItem.lastUpdated && (
+          <>
             <Typography.Text type="secondary">
               上次更新：{moment(dataItem.lastUpdated).locale("zh-tw").fromNow()}
             </Typography.Text>
           </>
-        ) : (
-          <Typography.Text type="secondary">無資料</Typography.Text>
         )}
       </div>
     );
