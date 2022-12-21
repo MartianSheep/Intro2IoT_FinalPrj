@@ -15,8 +15,6 @@ export const getMessages = async (req, res) => {
 export const createMessage = async (req, res) => {
   try {
     const messageInfo = req.body;
-    const newMessage = new MessageModel(messageInfo);
-    await newMessage.save();
 
     console.log("===== Create Message =====");
     console.log(messageInfo);
@@ -41,16 +39,9 @@ export const createMessage = async (req, res) => {
     for (let i = 0; i < messageInfo.path.length; i = i + 1) {
       await DeviceModel.findOneAndUpdate(
         { deviceId: messageInfo.path[i] },
-        { lastActive: Date.now() }
+        { lastActive: Date.now(), battery: messageInfo.battery }
       );
     }
-
-    // messageInfo.path.forEach(async (deviceId) => {
-    //   await DeviceModel.findOneAndUpdate(
-    //     { deviceId: deviceId },
-    //     { lastActive: Date.now() }
-    //   );
-    // });
 
     if (messageInfo.messageType === 0) {
       // measurement
@@ -59,9 +50,12 @@ export const createMessage = async (req, res) => {
       if (!cabin) {
         return res.status(404).send("Cabin not found");
       }
-      cabin.water = messageInfo.water;
-      cabin.temperature = messageInfo.temperature;
-      cabin.electricity = messageInfo.electricity;
+      if (messageInfo.water >= 0) cabin.water = messageInfo.water;
+      if (messageInfo.temperature >= 0)
+        cabin.temperature = messageInfo.temperature;
+      if (messageInfo.electricity >= 0)
+        cabin.electricity = messageInfo.electricity;
+
       cabin.lastUpdated = Date.now();
 
       await CabinModel.findByIdAndUpdate(cabin._id, cabin);

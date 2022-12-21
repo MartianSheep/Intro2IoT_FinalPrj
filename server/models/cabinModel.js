@@ -9,6 +9,11 @@ const cabinModel = mongoose.Schema({
 
   deviceId: { type: String, default: null },
 
+  waterFull: { type: Number, required: true },
+  waterEmpty: { type: Number, required: true },
+
+  tags: { type: [String] },
+
   water: { type: Number },
   electricity: { type: Number },
   temperature: { type: Number },

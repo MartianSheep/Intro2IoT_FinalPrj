@@ -23,12 +23,14 @@ export default class MapTypeScatterPolylineSeries extends React.Component {
 
   public render(): JSX.Element {
     return (
-      <IgrGeographicMap
-        ref={this.onMapRef}
-        width="100%"
-        height="100%"
-        zoomable="true"
-      />
+      <div style={{ width: "100%", height: "100vh" }}>
+        <IgrGeographicMap
+          ref={this.onMapRef}
+          width="100%"
+          height="100%"
+          zoomable="true"
+        />
+      </div>
     );
   }
 

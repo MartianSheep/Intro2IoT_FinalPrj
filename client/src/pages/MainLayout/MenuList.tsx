@@ -1,11 +1,14 @@
 import React from "react";
 import {
   DesktopOutlined,
-  // FileOutlined,
+  HomeOutlined,
   PieChartOutlined,
+  EnvironmentOutlined,
+  WifiOutlined,
   // TeamOutlined,
   // UserOutlined,
 } from "@ant-design/icons";
+// import Icon from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Link } from "react-router-dom";
 
@@ -25,17 +28,24 @@ function getItem(
 const items: MenuItem[] = [
   getItem(
     <Link to="/cabin">
-      <DesktopOutlined />
-      <span>列表</span>
+      <HomeOutlined />
+      <span>山屋水情</span>
     </Link>,
     "1"
   ),
   getItem(
     <Link to="/map">
-      <PieChartOutlined />
+      <EnvironmentOutlined />
       <span>地圖</span>
     </Link>,
     "2"
+  ),
+  getItem(
+    <Link to="/devices">
+      <WifiOutlined />
+      <span>通訊站</span>
+    </Link>,
+    "3"
   ),
   // getItem("User", "sub1", <UserOutlined />, [
   //   getItem("Tom", "3"),
