@@ -11,7 +11,7 @@ export class Request {
   instance: AxiosInstance;
 
   baseConfig: AxiosRequestConfig = {
-    baseURL: "http://localhost:5000",
+    baseURL: "https://iot-term-project-server.onrender.com",
     timeout: 60000,
   };
 
