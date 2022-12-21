@@ -15,6 +15,7 @@ const int resetPin = 2;
 const int irqPin = 4;
 const int helpPin = 34;
 const int batteryPin = 35;
+const int infraredPin = 15;
 
 uint8_t MAC[6] = {0};
 //String id = "";
@@ -28,10 +29,10 @@ volatile int rangeStatus;
 
 esp_sleep_wakeup_cause_t wakeup_reason;
 uint64_t expectWakeupTime = 0;
-uint64_t sleepTime = 10 * 1000000;
-uint64_t awakeTime = 2 * 1000000;
-uint64_t waitTime = 2 * 1000000;
-bool getCallback = false;
+uint64_t sleepTime = 20 * 1000000;
+//uint64_t awakeTime = 2 * 1000000;
+//uint64_t waitTime = 2 * 1000000;
+//bool getCallback = false;
 
 void print_wakeup_reason(esp_sleep_wakeup_cause_t wakeup_reason){
   switch(wakeup_reason)
@@ -54,27 +55,36 @@ int readSerial() {
   return tofSerial.read();
 }
 
-int Ranging() {
-  tofSerial.begin(9600, SERIAL_8N1, 16, 17);
-  // serial fail?
-  // while(!tofSerial)
-  
-  sendSerial(0x55);
-  sendSerial(0xAA);
-  sendSerial(TOFM_CMD_ST_MM);
-  sendSerial(0x00);
-  sendSerial(0xFA);
+float Ranging() {
+    tofSerial.begin(9600, SERIAL_8N1, 16, 17);
+    // serial fail?
+    // while(!tofSerial)
+    
+    sendSerial(0x55);
+    sendSerial(0xAA);
+    sendSerial(TOFM_CMD_ST_MM);
+    sendSerial(0x00);
+    sendSerial(0xFA);
 
-  if(readSerial() != 0x55) return -1;
-  if(readSerial() != 0xAA) return -1;
-  if(readSerial() != TOFM_CMD_ST_MM) return -1;
-  if(readSerial() != 0x03) return -1;
-  int distHi = readSerial();
-  int distLo = readSerial();
-  rangeStatus = readSerial();
-  if(readSerial() != 0xFA) return -1;
-
-  return distHi * 256 + distLo;
+    uint64_t currentTime = esp_timer_get_time();
+    uint64_t timeout = 0.1 * 1000000;
+    while(esp_timer_get_time() - currentTime < timeout){
+      if(tofSerial.available()){
+        if(readSerial() != 0x55) break; // return -1;
+        if(readSerial() != 0xAA) break; // return -1;
+        if(readSerial() != TOFM_CMD_ST_MM) break; // return -1;
+        if(readSerial() != 0x03) break; // return -1;
+        int distHi = readSerial();
+        int distLo = readSerial();
+        rangeStatus = readSerial();
+        if(readSerial() != 0xFA) return -1;
+      
+        return distHi * 256 + distLo;   
+      }
+    }
+    // failed, use infrared
+    int value = analogRead(infraredPin);
+    return 20.0 / (value*3.3/4095.0 - 0.3);
 }
 
 void gotoSleep() {
@@ -106,6 +116,7 @@ void setup() {
 
   pinMode(helpPin, INPUT_PULLDOWN);
   pinMode(batteryPin, INPUT);
+  pinMode(infraredPin, INPUT);;
   
   Serial.begin(115200);
 
