@@ -45,7 +45,8 @@ export const createMessage = async (req, res) => {
 
     if (messageInfo.messageType === 0) {
       // measurement
-      const senderId = messageInfo.senderId;
+      const senderId = messageInfo.senderId.toUpperCase();
+
       let cabin = await CabinModel.findOne({ deviceId: senderId });
       if (!cabin) {
         return res.status(404).send("Cabin not found");
