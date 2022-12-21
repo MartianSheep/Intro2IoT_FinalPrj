@@ -3,6 +3,8 @@ from time import sleep
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 
+from getmac import get_mac_address as gma
+
 import sys
 import requests
 import json
@@ -12,6 +14,8 @@ baseUrl = "https://iot-term-project-server.onrender.com/messages"
 
 BOARD.setup()
 print("board setup!!!")
+MAC_ADDR = gma()
+print(f"Mac Address: {MAC_ADDR}")
 
 
 class LoRaRcvCont(LoRa):
@@ -37,6 +41,8 @@ class LoRaRcvCont(LoRa):
         payload = self.read_payload(nocheck=True)
         try:
             payload = json.loads(bytes(payload).decode("utf-8",'ignore'))
+            payload["path"].append(MAC_ADDR)
+            print(payload)
             res = requests.post(baseUrl, json=payload)
             print(res.status_code)
             if res.status_code != 200:
