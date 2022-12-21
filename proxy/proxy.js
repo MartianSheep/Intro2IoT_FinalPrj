@@ -18,8 +18,9 @@ app.post("/messages", async (req, res) => {
   return res.status(200).send();
 });
 
-app.listen(5000, () =>
-  console.log(`Server Running on Port: http://localhost:${5000}`)
+const port = 8000;
+app.listen(port, () =>
+  console.log(`Server Running on Port: http://localhost:${port}`)
 );
 // const res = await axios.get(
 //   "https://iot-term-project-server.onrender.com/messages"
