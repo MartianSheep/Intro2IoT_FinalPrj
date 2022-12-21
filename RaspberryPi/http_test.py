@@ -1,7 +1,7 @@
 import requests
 baseUrl = "https://iot-term-project-server.onrender.com/messages"
 
-r = requests.post(baseUrl, data={
+r = requests.post(baseUrl, json={
     "messageType":0,
     "water":56,
     "electricity": -1,
