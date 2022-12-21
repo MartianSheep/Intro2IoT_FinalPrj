@@ -26,7 +26,7 @@ interface CabinDataType {
   link: string;
 }
 
-const TablePage = (): JSX.Element => {
+const CabinsPage = (): JSX.Element => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -159,4 +159,4 @@ const TablePage = (): JSX.Element => {
   );
 };
 
-export default TablePage;
+export default CabinsPage;

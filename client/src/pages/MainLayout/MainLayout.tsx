@@ -7,7 +7,7 @@ import items from "./MenuList";
 // import MapWrapper from "../MapPage/MapWrapper";
 import Map from "../MapPage/Map";
 import LineMap from "../LineMap/LineMap";
-import TablePage from "../TablePage/TablePage";
+import CabinsPage from "../CabinsPage/CabinsPage";
 
 const { Content, Sider, Header, Footer } = Layout;
 
@@ -53,7 +53,7 @@ function MainLayout(): JSX.Element {
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Content style={{ margin: "0", overflow: "initial" }}>
             <Routes>
-              <Route path="/cabin" element={<TablePage />} />
+              <Route path="/cabin" element={<CabinsPage />} />
               <Route path="/map" element={<Map />} />
               <Route path="/devices" element={<LineMap />} />
             </Routes>

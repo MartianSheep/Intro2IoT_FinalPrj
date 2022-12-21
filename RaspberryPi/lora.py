@@ -11,11 +11,12 @@ baseUrl = "https://iot-term-project-server.onrender.com/messages"
 
 
 BOARD.setup()
+print("board setup!!!")
 
 
 class LoRaRcvCont(LoRa):
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=True):
         super(LoRaRcvCont, self).__init__(verbose)
         self.set_mode(MODE.SLEEP)
         self.set_dio_mapping([0] * 6)
@@ -50,6 +51,10 @@ class LoRaRcvCont(LoRa):
 
 lora = LoRaRcvCont(verbose=False)
 lora.set_mode(MODE.STDBY)
+
+print(lora.get_freq())
+lora.set_freq(433.0)
+print(lora.get_freq())
 
 #  Medium Range  Defaults after init are 434.0MHz, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on 13 dBm
 lora.set_pa_config(pa_select=1)
