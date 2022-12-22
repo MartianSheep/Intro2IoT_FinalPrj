@@ -122,7 +122,7 @@ const CabinsPage = (): JSX.Element => {
         ),
     },
     {
-      title: "電量",
+      title: "山屋電量",
       dataIndex: "electricity",
       key: "electricity",
       render: (data) =>

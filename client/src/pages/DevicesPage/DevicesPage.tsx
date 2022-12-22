@@ -84,7 +84,7 @@ const DevicesPage = (): JSX.Element => {
         ),
     },
     {
-      title: "電量",
+      title: "裝置電量",
       dataIndex: "battery",
       key: "battery",
       render: (data) =>
