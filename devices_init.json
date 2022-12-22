@@ -1,0 +1,47 @@
+[
+  {
+    "lon": 120.9226,
+    "lat": 23.56211,
+    "elevation": 1108,
+    "deviceId": "B8:27:EB:77:06:95",
+    "name": "東埔-gateway",
+    "battery": -1,
+    "type": "gateway"
+  },
+  {
+    "lon": 120.958072,
+    "lat": 23.546048,
+    "elevation": 1694,
+    "deviceId": "64:45:63:7E:DC:0C",
+    "name": "樂樂山屋-node",
+    "battery": -1,
+    "type": "node"
+  },
+  {
+    "lon": 121.001992,
+    "lat": 23.502384,
+    "elevation": 2537,
+    "deviceId": "A",
+    "name": "觀高山屋-fake-node",
+    "battery": -1,
+    "type": "node"
+  },
+  {
+    "lon": 121.016489,
+    "lat": 23.487669,
+    "elevation": 2809,
+    "deviceId": "B",
+    "name": "巴奈伊克山屋-fake-node",
+    "battery": -1,
+    "type": "node"
+  },
+  {
+    "lon": 121.027458,
+    "lat": 23.486466,
+    "elevation": 2928,
+    "deviceId": "C",
+    "name": "中央金礦山屋-fake-node",
+    "battery": -1,
+    "type": "node"
+  }
+]

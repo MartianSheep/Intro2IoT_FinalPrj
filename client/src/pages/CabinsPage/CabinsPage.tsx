@@ -24,15 +24,31 @@ interface CabinDataType {
   lastUpdated: string;
   tags: string[];
   link: string;
+  waterEmpty: number;
+  waterFull: number;
 }
 
-const TablePage = (): JSX.Element => {
+const CabinsPage = (): JSX.Element => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const [cabins, setCabins] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalInfo, setModalInfo] = useState<CabinDataType>();
+
+  const waterCal = (cabinData: CabinDataType) => {
+    if (cabinData.water === undefined || cabinData.water < 0) return -1;
+    let res: number = Math.round(
+      (cabinData.water * 5) / (cabinData.waterEmpty - cabinData.waterFull)
+    );
+    console.log(res);
+    if (res > 5) res = 5;
+    if (res < 0) res = 0;
+
+    res = 5 - res;
+    console.log(res);
+    return res;
+  };
 
   const showModal = (cabin: CabinDataType) => {
     setIsModalOpen(true);
@@ -48,12 +64,9 @@ const TablePage = (): JSX.Element => {
       const data: any = await axios.get("cabins");
 
       setCabins(
-        data.map((d: any) => ({
+        data.map((d: CabinDataType) => ({
           ...d,
-          water:
-            d.water >= 0
-              ? Math.round((d.water * 5) / (d.waterEmpty - d.waterFull))
-              : -1,
+          water: waterCal(d),
         }))
       );
     };
@@ -102,7 +115,7 @@ const TablePage = (): JSX.Element => {
       dataIndex: "water",
       key: "water",
       render: (data) =>
-        data && data >= 0 ? (
+        data !== undefined && data >= 0 ? (
           <IconArray number={data} type="water" />
         ) : (
           <Typography.Text type="secondary">無資料</Typography.Text>
@@ -113,7 +126,7 @@ const TablePage = (): JSX.Element => {
       dataIndex: "electricity",
       key: "electricity",
       render: (data) =>
-        data && data >= 0 ? (
+        data !== undefined && data >= 0 ? (
           <IconArray number={data} type="electricity" />
         ) : (
           <Typography.Text type="secondary">無資料</Typography.Text>
@@ -159,4 +172,4 @@ const TablePage = (): JSX.Element => {
   );
 };
 
-export default TablePage;
+export default CabinsPage;

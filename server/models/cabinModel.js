@@ -13,6 +13,7 @@ const cabinModel = mongoose.Schema({
   waterEmpty: { type: Number, required: true },
 
   tags: { type: [String] },
+  link: { type: String },
 
   water: { type: Number },
   electricity: { type: Number },

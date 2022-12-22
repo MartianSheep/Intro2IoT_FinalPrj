@@ -18,6 +18,8 @@ export const createMessage = async (req, res) => {
 
     console.log("===== Create Message =====");
     console.log(messageInfo);
+    messageInfo.path = messageInfo.path.map((p) => p.toUpperCase());
+    messageInfo.senderId = messageInfo.senderId.toUpperCase();
 
     // update devices
     for (let i = 0; i < messageInfo.path.length; i = i + 1) {
@@ -28,28 +30,29 @@ export const createMessage = async (req, res) => {
       if (!foundDevice) {
         return res.status(403).send("Contains unknown device id");
       }
+      if (i === messageInfo.path.length - 1 && foundDevice.type !== "gateway") {
+        return res.status(403).send("The last device is not a gateway!");
+      }
     }
-    // messageInfo.path.forEach(async (deviceId) => {
-    //   const test = await DeviceModel.findOne({});
-    // });
     if (messageInfo.path[0] !== messageInfo.senderId) {
       return res.status(403).send("Sender id is not the first id in path");
     }
-
     for (let i = 0; i < messageInfo.path.length; i = i + 1) {
       await DeviceModel.findOneAndUpdate(
         { deviceId: messageInfo.path[i] },
-        { lastActive: Date.now(), battery: messageInfo.battery }
+        { lastActive: Date.now() }
       );
     }
 
     if (messageInfo.messageType === 0) {
       // measurement
       const senderId = messageInfo.senderId;
+
       let cabin = await CabinModel.findOne({ deviceId: senderId });
       if (!cabin) {
         return res.status(404).send("Cabin not found");
       }
+
       if (messageInfo.water >= 0) cabin.water = messageInfo.water;
       if (messageInfo.temperature >= 0)
         cabin.temperature = messageInfo.temperature;
@@ -57,6 +60,12 @@ export const createMessage = async (req, res) => {
         cabin.electricity = messageInfo.electricity;
 
       cabin.lastUpdated = Date.now();
+
+      // update battery
+      await DeviceModel.findOneAndUpdate(
+        { deviceId: senderId },
+        { battery: messageInfo.battery }
+      );
 
       await CabinModel.findByIdAndUpdate(cabin._id, cabin);
       const newMessage = new MessageModel(messageInfo);

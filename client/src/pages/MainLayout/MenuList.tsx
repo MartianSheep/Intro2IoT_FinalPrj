@@ -27,7 +27,7 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(
-    <Link to="/cabin">
+    <Link to="/">
       <HomeOutlined />
       <span>山屋水情</span>
     </Link>,

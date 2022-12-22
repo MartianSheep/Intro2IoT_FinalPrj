@@ -7,7 +7,8 @@ import items from "./MenuList";
 // import MapWrapper from "../MapPage/MapWrapper";
 import Map from "../MapPage/Map";
 import LineMap from "../LineMap/LineMap";
-import TablePage from "../TablePage/TablePage";
+import CabinsPage from "../CabinsPage/CabinsPage";
+import DevicesPage from "../DevicesPage/DevicesPage";
 
 const { Content, Sider, Header, Footer } = Layout;
 
@@ -33,7 +34,7 @@ function MainLayout(): JSX.Element {
             style={{
               height: 64,
               margin: 0,
-              background: "rgba(0, 255, 255, 0.2)",
+              // background: "rgba(0, 255, 255, 0.2)",
               display: "flex",
               justifyContent: "center",
               // alignItems: "center",
@@ -41,7 +42,7 @@ function MainLayout(): JSX.Element {
               // paddingLeft: 30,
             }}
           >
-            <Typography.Title level={2}>第13組</Typography.Title>
+            <Typography.Title level={3}>誠徵Logo</Typography.Title>
           </div>
           <Menu
             theme="light"
@@ -53,9 +54,9 @@ function MainLayout(): JSX.Element {
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Content style={{ margin: "0", overflow: "initial" }}>
             <Routes>
-              <Route path="/cabin" element={<TablePage />} />
+              <Route path="/" element={<CabinsPage />} />
               <Route path="/map" element={<Map />} />
-              <Route path="/devices" element={<LineMap />} />
+              <Route path="/devices" element={<DevicesPage />} />
             </Routes>
           </Content>
         </Layout>
