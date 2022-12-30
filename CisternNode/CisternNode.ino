@@ -29,7 +29,7 @@ volatile int rangeStatus;
 
 esp_sleep_wakeup_cause_t wakeup_reason;
 uint64_t expectWakeupTime = 0;
-uint64_t sleepTime = 20 * 1000000;
+uint64_t sleepTime = 10 * 1000000;
 //uint64_t awakeTime = 2 * 1000000;
 //uint64_t waitTime = 2 * 1000000;
 //bool getCallback = false;
@@ -91,13 +91,15 @@ float Ranging() {
 void gotoSleep() {
   Serial.println("Start sleeping");
   LoRa.end();
-  if(wakeup_reason != ESP_SLEEP_WAKEUP_EXT0){
-    expectWakeupTime = esp_timer_get_time() + sleepTime;
-    esp_sleep_enable_timer_wakeup(sleepTime);
-  }
-  else{
-    esp_sleep_enable_timer_wakeup(expectWakeupTime - esp_timer_get_time());
-  }
+//  if(wakeup_reason != ESP_SLEEP_WAKEUP_EXT0){
+//    expectWakeupTime = esp_timer_get_time() + sleepTime;
+//    esp_sleep_enable_timer_wakeup(sleepTime);
+//  }
+//  else{
+//    esp_sleep_enable_timer_wakeup(expectWakeupTime - esp_timer_get_time());
+//  }
+//  expectWakeupTime = esp_timer_get_time() + sleepTime;
+  esp_sleep_enable_timer_wakeup(sleepTime);
   rtc_gpio_pulldown_en((gpio_num_t)helpPin);
   esp_sleep_enable_ext0_wakeup((gpio_num_t)helpPin, RISING);
   Serial.flush();
